@@ -61,7 +61,29 @@ def ingredientes_en_unidad_medida(r:List[Receta],u:str|None =None)->int:
 
 def recetas_con_ingredientes(r:List[Receta],con:set[str])->List[Tuple[str,int,float]]:
     l = [(a.denominacion,a.calorias,a.precio) for a in r if any(b.nombre in con for b in a.ingredientes) ] 
-    #el any es como un or que sirve para agregar la receta si uno de los ingredientes esta en el con, asi no se repiten recetas
+    #el any es como un or que sirve para agregar la receta si uno de los ingredientes esta en el conjunto, asi no se repiten recetas
     # si se cumple cualquiera de esto , list.append((a.den...))
     return l
+
+def receta_mas_barata(r:List[Receta],tipos:set[str],n:int=None)->Receta:
+    l = [a for a in r if a.tipo in tipos]
+    #me quedo con las n primeras recetas con menos calorias y luego devuelvo la mas barata
+    if n is not None:
+        l = sorted(l, key=lambda a: a.calorias)[:n] 
+    
+    return min(l, key=lambda a: a.precio)
+
+
+def recetas_baratas_con_menos_calorias(r:List[Receta],n:int)->List[Tuple[str,int]]:
+    s = 0
+    for a in r:
+            s += a.precio
+    precio_medio = s/len(r)
+    l = [a for a in r if a.precio <=(precio_medio)]
+    l = sorted(l,key = lambda x:x.calorias)[:n]
+    e = [ (a.denominacion,a.calorias) for a in l]
+    return e
+    #CUIDADO QUE SIEMPRE ME EQUIVOCO LEYENDO EL TEXTO Y HAGO EL ORDEN INVERSO
+    #Primero cojo las baratas y luego las de menos calorias, porque si lo hago al reves 
+    #puede que no salgan las n recetsas porque alguna de las n sea cara
 
